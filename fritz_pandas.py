@@ -1,12 +1,11 @@
-#Test
 
 import pymysql as mysql
 import getpass
 import pandas as pd
 import re
 
-username = input("Username: ") #root
-password = getpass.getpass("Password: ") #blank
+username = input("Username: ") 
+password = getpass.getpass("Password: ") 
 
 def getSQLData(u, p):
 	connection = mysql.connect(host='localhost', user=u, password=p, db='BSCY4', charset='utf8')
@@ -19,16 +18,13 @@ def getSQLData(u, p):
 
 			#Year
 			# print(dfSQL['Year'].unique()) #Finding out what are different
-			yearCount = 0
 			for year in dfSQL.Year:
 				yearAsString = str(year)
-				if(yearCount < len(dfSQL.Year)):
-					if(len(yearAsString) == 2):
-						yearClean = "20%s" % yearAsString
-						dfSQL['Year'].replace(year, yearClean, inplace=True)
-						yearCount+1
-					else:
-						dfSQL['Year'].replace(year, yearAsString, inplace=True)
+				if(len(yearAsString) == 2):
+					yearClean = "20%s" % yearAsString
+					dfSQL['Year'].replace(year, yearClean, inplace=True)
+				else:
+					dfSQL['Year'].replace(year, yearAsString, inplace=True)
 
 			# pd.to_numeric(dfSQL['Year'], errors='coerce')
 			dfSQL['Year'] = dfSQL['Year'].astype('int64')
@@ -62,7 +58,7 @@ def getCSVData():
 	dfCSV['Year'] = dfCSV['Year'].astype('int64')	
 
 	# Type
-	print(dfCSV['Type'].unique()) 
+	# print(dfCSV['Type'].unique()) 
 	for ty in dfCSV['Type']:
 				if re.findall(r"\W", ty):
 					dfCSV['Type'].replace(ty, re.sub('Org.',"organic", ty), inplace=True)
@@ -71,17 +67,15 @@ def getCSVData():
 
 	# print(dfCSV['AveragePrice'].unique()) 
 	
-	avgCount = 0
 	for avg in dfCSV.AveragePrice:
-		if(avgCount < len(dfCSV.AveragePrice)):
-			if "," in str(avg):
-				correctAvg =  float(str(avg).replace(",", "."))
-				dfCSV['AveragePrice'].replace(avg, correctAvg, inplace=True)
-				avgCount+1
-			else:
+		
+		if "," in str(avg):
+			correctAvg =  float(str(avg).replace(",", "."))
+			dfCSV['AveragePrice'].replace(avg, correctAvg, inplace=True)
+		else:
 
-				dfCSV['AveragePrice'].replace(avg, float(avg), inplace=True)
-				avgCount+1
+			dfCSV['AveragePrice'].replace(avg, float(avg), inplace=True)
+
 
 	dfCSV['AveragePrice'] = dfCSV['AveragePrice'].astype('float64')	
 
@@ -139,9 +133,11 @@ def getCSVData():
 
 
 def consolidate():
-	getCSVData().append(getSQLData(username, password), ignore_index=True).to_csv("results.csv", encoding="utf-8", index=False)
+	getCSVData().append(getSQLData(username, password), ignore_index=True).to_csv("fritz_results.csv", encoding="utf-8", index=False)
 
 				
 
 consolidate()
 
+
+# getCSVData()
